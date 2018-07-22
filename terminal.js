@@ -10,9 +10,15 @@ class Terminal extends EventEmitter {
 
 	stop() {}
 
+	pushRawKeyInterceptor(interceptor) {}
+
+	popRawKeyInterceptor() {}
+
+	removeRawKeyInterceptor(interceptor) {}
+
 }
 
-const boxChars = {
+Terminal.unicodeBoxChars = {
 	vert: '\u2502',
 	hor: '\u2500',
 	leftUpper: '\u250C',
@@ -55,7 +61,63 @@ const boxChars = {
 	doubleCross: '\u256C'
 };
 
-module.exports = {
-	Terminal,
-	boxChars
+Terminal.asciiBoxChars = {
+	vert: '|',
+	hor: '-',
+	leftUpper: '+',
+	rightUpper: '+',
+	leftLower: '+',
+	rightLower: '+',
+	rightT: '+',
+	leftT: '+',
+	downT: '+',
+	upT: '+',
+	cross: '+',
+	doubleHor: '|',
+	doubleVert: '-',
+	leftDoubleUpper: '+',
+	doubleLeftUpper: '+',
+	doubleLeftDoubleUpper: '+',
+	rightDoubleUpper: '+',
+	doubleRightUpper: '+',
+	doubleRightDoubleUpper: '+',
+	leftDoubleLower: '+',
+	doubleLeftLower: '+',
+	doubleLeftDoubleLower: '+',
+	rightDoubleLower: '+',
+	doubleRightLower: '+',
+	doubleRightDoubleLower: '+',
+	doubleRightT: '+',
+	rightDoubleT: '+',
+	doubleRightDoubleT: '+',
+	doubleLeftT: '+',
+	leftDoubleT: '+',
+	doubleLeftDoubleT: '+',
+	downDoubleT: '+',
+	doubleDownT: '+',
+	doubleDownDoubleT: '+',
+	upDoubleT: '+',
+	doubleUpT: '+',
+	doubleUpDoubleT: '+',
+	doubleHorCross: '+',
+	doubleVertCross: '+',
+	doubleCross: '+'
 };
+
+class Key {
+
+	constructor(symbolic, character, modifiers) {
+		this.symbolic = symbolic;
+		this.character = character;
+		this.modifiers = modifiers;
+	}
+
+}
+
+Key.CTRL = 1;
+Key.ALT = 2;
+Key.SHIFT = 4;
+
+Terminal.Key = Key;
+
+module.exports = Terminal;
