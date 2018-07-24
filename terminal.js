@@ -106,10 +106,58 @@ Terminal.asciiBoxChars = {
 
 class Key {
 
-	constructor(symbolic, character, modifiers) {
-		this.symbolic = symbolic;
-		this.character = character;
+	constructor(type, modifiers, value) {
+		this.type = type;
 		this.modifiers = modifiers;
+		this.value = value;
+	}
+
+	toString() {
+		const prefix = Key.modifierPrefix(this.modifiers);
+		switch(this.type) {
+			case Key.FUNCTION:
+				return prefix + 'F' + this.value;
+			case Key.GENERIC:
+				return prefix + Key.nameChar(this.value);
+			default:
+				return prefix + Key.TYPE_NAMES[this.type];
+		}
+	}
+
+	static modifierPrefix(modifiers) {
+		var prefix = '';
+		if(modifiers & Key.CTRL)
+			prefix += 'C-';
+		if(modifiers & Key.SHIFT)
+			prefix += 'S-';
+		if(modifiers & Key.ALT)
+			prefix += 'M-';
+		return prefix;
+	}
+
+	static nameChar(c) {
+		switch(c) {
+			case '\u0000':
+				return 'Null';
+			case '\u0007':
+				return 'Bell';
+			case '\b':
+				return 'Backspace';
+			case '\t':
+				return 'Tab';
+			case '\n':
+				return 'Newline';
+			case '\f':
+				return 'FormFeed';
+			case '\r':
+				return 'Return';
+			case '\u001b':
+				return 'Escape';
+			case ' ':
+				return 'Space';
+			default:
+				return c;
+		}
 	}
 
 }
@@ -117,6 +165,36 @@ class Key {
 Key.CTRL = 1;
 Key.ALT = 2;
 Key.SHIFT = 4;
+
+Key.DELETE = 0;
+Key.DOWN = 1;
+Key.END = 2;
+Key.ENTER = 3;
+Key.FUNCTION = 4;
+Key.HOME = 5;
+Key.INSERT = 6;
+Key.LEFT = 7;
+Key.PAGE_DOWN = 8;
+Key.PAGE_UP = 9;
+Key.RIGHT = 10;
+Key.UP = 11;
+Key.GENERIC = 12;
+
+Key.TYPE_NAMES = [
+	'Delete',
+	'Down',
+	'End',
+	'Enter',
+	null,
+	'Home',
+	'Insert',
+	'Left',
+	'PageDown',
+	'PageUp',
+	'Right',
+	'Up',
+	null
+];
 
 Terminal.Key = Key;
 

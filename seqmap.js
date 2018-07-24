@@ -14,8 +14,7 @@ class Node {
 	}
 
 	getChild(key) {
-		const child = this.children[key];
-		return child ? child : null;
+		return this.children[key] || null;
 	}
 
 	get size() {
