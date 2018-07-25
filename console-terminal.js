@@ -42,9 +42,6 @@ class ConsoleTerminal extends Terminal {
 		this.keyConverter = mkkeyconv && mkkeyconv();
 		if(!this.keyConverter)
 			this.keyConverter = new KeyPressToKeyConverter();
-		this.keyConverter.discardedInputSink = chunk => {
-			this.emit('inputDiscarded', chunk);
-		};
 		this.rawKeyInterceptors = [];
 	}
 
@@ -121,12 +118,39 @@ class ConsoleTerminal extends Terminal {
 	}
 
 	static _convertPreDecodedKey(name, info) {
-		//TODO
+		if(!info.name)
+			return null;
+		var modifiers = 0;
+		if(info.ctrl)
+			modifiers |= Key.CTRL;
+		if(info.meta)
+			modifiers |= Key.ALT;
+		if(info.shift)
+			modifiers |= Key.SHIFT;
+		const key = ConsoleTerminal._PREDECODED_MAP[modifiers + ':' + info.name];
+		return key ? Object.create(key) : null;
+	}
+
+	static mapPreDecoded() {
+		return Object.create(ConsoleTerminal._PREDECODED_MAP, {
+			map: {
+				value: function(infoName, infoModifiers, keyType, keyModifiers, keyValue) {
+					this[infoModifiers + ':' + infoName] = new Key(keyType, keyModifiers, keyValue);
+					return this;
+				}
+			}
+		});
 	}
 
 }
 
 ConsoleTerminal.DEFAULT_TYPE = 'xterm';
+
 ConsoleTerminal.NotATerminalException = NotATerminalException;
+
+ConsoleTerminal._PREDECODED_MAP = Object.create(null);
+
+ConsoleTerminal.mapPreDecoded()
+;
 
 module.exports = ConsoleTerminal;

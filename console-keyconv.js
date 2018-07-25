@@ -6,12 +6,11 @@ class KeyPressToKeyConverter {
 	constructor() {
 		this.inputConverters = [];
 		this.singleByteConverters = [];
-		this._stages = this.lastKey = null;
+		this._stages = this._lastKey = null;
 		this._lastLength = 0;
 		this._chars = [];
 		this._keyQueue = [];
 		this._currentDepth = 0;
-		this.discardedInputSink = null;
 	}
 
 	addInputConverter(converter) {
@@ -46,39 +45,19 @@ class KeyPressToKeyConverter {
 		if(!chars.length)
 			return;
 		this._chars = this._chars.concat(chars);
-		var i, pushed = false;
-		for(i = 0; i < chars.length; ++i) {
-			if(this._feedChar(chars[i])) {
-				pushed = true;
-				break;
-			}
-		}
-		while(pushed)
-			pushed = this._feedCharQueue();
-	}
-
-	_feedCharQueue() {
-		var i;
-		for(i = 0; i < this._chars.length; ++i) {
-			if(this._feedChar(this._chars[i]))
-				return true;
-		}
-		return false;
+		while(this._currentDepth < this._chars.length)
+			this._feedChar(this._chars[this._currentDepth]);
 	}
 
 	_feedChar(input) {
 		if(!this._currentDepth)
 			this._beginSequences();
+		++this._currentDepth;
 		this._advanceSequences(input);
 		if(!this._currentDepth)
 			this._processSingles(input);
-		++this._currentDepth;
-		if(!this._stages.length) {
-			this._endPaths(input);
-			return true;
-		}
-		else
-			return false;
+		if(!this._stages.length)
+			this._endPaths();
 	}
 
 	_beginSequences() {
@@ -89,8 +68,8 @@ class KeyPressToKeyConverter {
 			if(!stage)
 				continue;
 			key = stage.currentKey;
-			if(!this.lastKey && key) {
-				this.lastKey = key;
+			if(!this._lastKey && key) {
+				this._lastKey = key;
 				this._lastLength = 0;
 			}
 			if(!stage.inputLeaf)
@@ -118,7 +97,7 @@ class KeyPressToKeyConverter {
 				this._stages[i] = nextStage;
 		}
 		if(nextKey) {
-			this.lastKey = nextKey;
+			this._lastKey = nextKey;
 			this._lastLength = this._currentDepth;
 		}
 	}
@@ -127,46 +106,41 @@ class KeyPressToKeyConverter {
 		var i, key;
 		for(i = 0; i < this.singleByteConverters.length; ++i) {
 			key = this.singleByteConverters[i].charToKey(input);
-			if(!this.lastKey && key) {
-				this.lastKey = key;
+			if(!this._lastKey && key) {
+				this._lastKey = key;
 				this._lastLength = 1;
 			}
 		}
 	}
 
-	_endPaths(input) {
-		if(!this.lastKey) {
-			this.lastKey = new Key(Key.GENERIC, 0, input);
+	_endPaths() {
+		if(!this._lastKey) {
+			this._lastKey = new Key(Key.GENERIC, 0, this._chars[0]);
 			this._lastLength = 1;
 		}
 		this._flushLastKeyAndClean();
 	}
 
 	_flushLastKeyAndClean() {
-		this._keyQueue.push(this.lastKey);
-		this._stages = this.lastKey = null;
-		var killed = null;
+		this._keyQueue.push(this._lastKey);
+		this._stages = this._lastKey = null;
 		if(this._lastLength) {
-			if(this._lastLength >= this._chars.length) {
-				killed = this._chars;
+			if(this._lastLength >= this._chars.length)
 				this._chars = [];
-			}
 			else
-				killed = this._chars.splice(0, this._lastLength);
+				this._chars.splice(0, this._lastLength);
 			this._lastLength = 0;
 		}
 		this._currentDepth = 0;
-		if(killed && killed.length && this.discardedInputSink)
-			this.discardedInputSink(killed.join(''));
 	}
 
 	flushSequences() {
-		if(this.lastKey)
+		if(this._lastKey)
 			this._flushLastKeyAndClean();
 	}
 
 	hasPendingKey() {
-		return !!this.lastKey;
+		return !!this._lastKey;
 	}
 
 }

@@ -12,7 +12,7 @@ class Stage {
 	}
 
 	get currentKey() {
-		return this.getCurrentKey();
+		return Object.create(this.getCurrentKey());
 	}
 
 	isInputLeaf() {
