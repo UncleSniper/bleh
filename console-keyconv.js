@@ -1,13 +1,17 @@
+const Terminal = require('./terminal.js');
+const Key = Terminal.Key;
+
 class KeyPressToKeyConverter {
 
 	constructor() {
 		this.inputConverters = [];
 		this.singleByteConverters = [];
-		this.stages = this.lastSymbol = null;
-		this.lastLength = 0;
-		this.chars = [];
-		this.keyQueue = [];
-		this.flushPointer = this.currentDepth = this.pathCount = 0;
+		this._stages = this.lastKey = null;
+		this._lastLength = 0;
+		this._chars = [];
+		this._keyQueue = [];
+		this._currentDepth = 0;
+		this.discardedInputSink = null;
 	}
 
 	addInputConverter(converter) {
@@ -27,7 +31,13 @@ class KeyPressToKeyConverter {
 	}
 
 	nextKey() {
-		return this.keyQueue.length ? this.keyQueue.shift() : null;
+		return this._keyQueue.length ? this._keyQueue.shift() : null;
+	}
+
+	fetchKeys() {
+		var keys = this._keyQueue;
+		this._keyQueue = [];
+		return keys;
 	}
 
 	feedInput(chars) {
@@ -35,49 +45,128 @@ class KeyPressToKeyConverter {
 			chars = chars.split('');
 		if(!chars.length)
 			return;
-		this.chars = this.chars.concat(chars);
-		int i, pushed = false;
+		this._chars = this._chars.concat(chars);
+		var i, pushed = false;
 		for(i = 0; i < chars.length; ++i) {
-			if(this.feedChar(chars[i])) {
+			if(this._feedChar(chars[i])) {
 				pushed = true;
 				break;
 			}
 		}
 		while(pushed)
-			pushed = this.feedCharQueue();
+			pushed = this._feedCharQueue();
 	}
 
-	feedCharQueue() {
-		var first = true;
-		//TODO
+	_feedCharQueue() {
+		var i;
+		for(i = 0; i < this._chars.length; ++i) {
+			if(this._feedChar(this._chars[i]))
+				return true;
+		}
+		return false;
 	}
 
-	feedChar() {
-		//TODO
+	_feedChar(input) {
+		if(!this._currentDepth)
+			this._beginSequences();
+		this._advanceSequences(input);
+		if(!this._currentDepth)
+			this._processSingles(input);
+		++this._currentDepth;
+		if(!this._stages.length) {
+			this._endPaths(input);
+			return true;
+		}
+		else
+			return false;
 	}
 
-	beginSequence() {
-		//TODO
+	_beginSequences() {
+		this._stages = [];
+		var i, stage, key;
+		for(i = 0; i < this.inputConverters.length; ++i) {
+			stage = this.inputConverters[i].newSequence();
+			if(!stage)
+				continue;
+			key = stage.currentKey;
+			if(!this.lastKey && key) {
+				this.lastKey = key;
+				this._lastLength = 0;
+			}
+			if(!stage.inputLeaf)
+				this._stages.push(stage);
+		}
 	}
 
-	advanceSequence() {
-		//TODO
+	_advanceSequences(input) {
+		var nextKey = null, i, nextStage, key;
+		for(i = 0; i < this._stages.length; ++i) {
+			nextStage = this._stages[i].getNextStage(input);
+			if(!nextStage) {
+				this._stages.splice(i, 1);
+				--i;
+				continue;
+			}
+			key = nextStage.currentKey;
+			if(!nextKey && key)
+				nextKey = key;
+			if(nextStage.inputLeaf) {
+				this._stages.splice(i, 1);
+				--i;
+			}
+			else
+				this._stages[i] = nextStage;
+		}
+		if(nextKey) {
+			this.lastKey = nextKey;
+			this._lastLength = this._currentDepth;
+		}
 	}
 
-	processSingles() {
-		//TODO
+	_processSingles(input) {
+		var i, key;
+		for(i = 0; i < this.singleByteConverters.length; ++i) {
+			key = this.singleByteConverters[i].charToKey(input);
+			if(!this.lastKey && key) {
+				this.lastKey = key;
+				this._lastLength = 1;
+			}
+		}
 	}
 
-	endPaths() {
-		//TODO
+	_endPaths(input) {
+		if(!this.lastKey) {
+			this.lastKey = new Key(Key.GENERIC, 0, input);
+			this._lastLength = 1;
+		}
+		this._flushLastKeyAndClean();
+	}
+
+	_flushLastKeyAndClean() {
+		this._keyQueue.push(this.lastKey);
+		this._stages = this.lastKey = null;
+		var killed = null;
+		if(this._lastLength) {
+			if(this._lastLength >= this._chars.length) {
+				killed = this._chars;
+				this._chars = [];
+			}
+			else
+				killed = this._chars.splice(0, this._lastLength);
+			this._lastLength = 0;
+		}
+		this._currentDepth = 0;
+		if(killed && killed.length && this.discardedInputSink)
+			this.discardedInputSink(killed.join(''));
 	}
 
 	flushSequences() {
-		//TODO
+		if(this.lastKey)
+			this._flushLastKeyAndClean();
 	}
 
 	hasPendingKey() {
-		//TODO
+		return !!this.lastKey;
 	}
 
 }

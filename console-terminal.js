@@ -1,10 +1,12 @@
 const Terminal = require('./terminal.js');
+const Key = Terminal.Key;
 const clic = require('cli-color');
 const readline = require('readline');
 const except = require('node-exceptions');
 const winsize = require('window-size');
 const termdb = require('./termdb.js');
 const SequenceMap = require('./seqmap.js');
+const KeyPressToKeyConverter = require('./console-keyconv.js');
 
 class NotATerminalException extends except.RuntimeException {
 
@@ -33,12 +35,16 @@ class ConsoleTerminal extends Terminal {
 					+ ", defaulting to '" + ConsoleTerminal.DEFAULT_TYPE + "'\n");
 			type = ConsoleTerminal.DEFAULT_TYPE;
 		}
-		this.specifier = termdb[type];
-		if(!this.specifier)
-			this.specifier = Object.create(null);
-		this.keyMap = this.specifier.keyMap;
-		if(!this.keyMap)
-			this.keyMap = new SequenceMap();
+		this._specifier = termdb[type];
+		if(!this._specifier)
+			this._specifier = Object.create(null);
+		var mkkeyconv = this._specifier.keyConverter;
+		this.keyConverter = mkkeyconv && mkkeyconv();
+		if(!this.keyConverter)
+			this.keyConverter = new KeyPressToKeyConverter();
+		this.keyConverter.discardedInputSink = chunk => {
+			this.emit('inputDiscarded', chunk);
+		};
 		this.rawKeyInterceptors = [];
 	}
 
@@ -51,7 +57,7 @@ class ConsoleTerminal extends Terminal {
 		process.stdin.setRawMode(true);
 		process.stdin.on('keypress', (name, info) => {
 			this.emit('keypress', name, info);
-			this.onKey(name, info);
+			this._onKey(name, info);
 		});
 	}
 
@@ -65,30 +71,33 @@ class ConsoleTerminal extends Terminal {
 		this.height = spec.height;
 	}
 
-	decodeKey(name, info) {
-		if(!info.sequence)
-			return null;
-		var modifiers = 0;
-		if(info.ctrl)
-			modifiers = Terminal.Key.CTRL;
-		if(info.meta)
-			modifiers = Terminal.Key.ALT;
-		if(info.shift)
-			modifiers = Terminal.Key.SHIFT;
-		//TODO
+	_decodeKeys(name, info) {
+		var keys, key = ConsoleTerminal._convertPreDecodedKey(name, info);
+		if(key) {
+			this.keyConverter.flushSequences();
+			keys = this.keyConverter.fetchKeys();
+			keys.push(key);
+		}
+		else if(info.sequence) {
+			this.keyConverter.feedInput(info.sequence);
+			keys = this.keyConverter.fetchKeys();
+		}
+		else
+			keys = [];
+		return keys;
 	}
 
-	onKey(name, info) {
-		var i, interceptor, propagate = true, key;
+	_onKey(name, info) {
+		var i, interceptor, propagate = true, keys;
 		for(i = 0; i < this.rawKeyInterceptors.length; ++i) {
 			interceptor = this.rawKeyInterceptors[i];
 			if(interceptor && !interceptor(name, info))
 				propagate = false;
 		}
 		if(propagate) {
-			key = this.decodeKey(name, info);
-			if(key)
-				this.emit('key', key);
+			keys = this._decodeKeys(name, info);
+			if(keys && keys.length)
+				this.emit('keys', keys);
 		}
 	}
 
@@ -109,6 +118,10 @@ class ConsoleTerminal extends Terminal {
 			}
 		}
 		return false;
+	}
+
+	static _convertPreDecodedKey(name, info) {
+		//TODO
 	}
 
 }
