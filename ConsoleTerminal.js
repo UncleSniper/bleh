@@ -21,13 +21,13 @@ class ConsoleTerminal extends Terminal {
 		});
 		if(!type)
 			type = process.env.TERM;
-		if(!type || !termdb[type]) {
+		if(!type || !termdb.db[type]) {
 			(warningChannel ? warningChannel : process.stderr.write.bind(process.stderr))("bleh: "
 					+ "Unknown terminal type" + (type ? " '" + type + "'" : '')
-					+ ", defaulting to '" + ConsoleTerminal.DEFAULT_TYPE + "'\n");
+					+ ", defaulting to '" + ConsoleTerminal.DEFAULT_TYPE + "'.\n");
 			type = ConsoleTerminal.DEFAULT_TYPE;
 		}
-		this._specifier = termdb[type];
+		this._specifier = termdb.db[type];
 		if(!this._specifier)
 			this._specifier = Object.create(null);
 		var mkkeyconv = this._specifier.keyConverter;

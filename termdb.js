@@ -27,25 +27,35 @@ function mapsing(rawMapper) {
 	});
 }
 
+const keyconvs = Object.create(null);
+
+Object.assign(keyconvs, {
+
+	'xterm': function() {
+		const conv = new KeyPressToKeyConverter();
+		const smic = new SequenceMapInputConverter();
+		xtermSeqMap(smic.map);
+		conv.addInputConverter(smic);
+		conv.addSingleByteConverter(MappingSingleCharConverter.ALTERNATE_BACKSPACE);
+		const mscc = new MappingSingleCharConverter();
+		xtermSingles(mscc);
+		conv.addSingleByteConverter(mscc);
+		return conv;
+	}
+
+});
+
 const db = Object.create(null);
 
 Object.assign(db, {
 
 	'xterm': {
-		keyConverter: function() {
-			const conv = new KeyPressToKeyConverter();
-			const smic = new SequenceMapInputConverter();
-			xtermSeqMap(smic.map);
-			conv.addInputConverter(smic);
-			conv.addSingleByteConverter(MappingSingleCharConverter.ALTERNATE_BACKSPACE);
-			const mscc = new MappingSingleCharConverter();
-			xtermSingles(mscc);
-			conv.addSingleByteConverter(mscc);
-			return conv;
-		}
+		keyConverter: keyconvs.xterm
 	}
 
 });
+
+alias('xterm', 'xterm-256color');
 
 function xtermSeqMap(map) {
 	mapseq(map)
@@ -164,4 +174,22 @@ function xtermSingles(mapper) {
 	;
 }
 
-module.exports = db;
+function alias(oldName, newName, warningChannel) {
+	const spec = db[oldName];
+	if(spec)
+		db[newName] = spec;
+	else
+		(warningChannel ? warningChannel : process.stderr.write.bind(process.stderr))("bleh: "
+				+ "Ignoring terminal type alias '" + oldName + "' -> '" + newName
+				+ "', since the former is undefined.\n");
+}
+
+module.exports = {
+	db,
+	keyconvs,
+	mapseq,
+	mapsing,
+	xtermSeqMap,
+	xtermSingles,
+	alias
+};
