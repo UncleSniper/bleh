@@ -43,6 +43,7 @@ class ConsoleTerminal extends Terminal {
 		if(!this.keyConverter)
 			this.keyConverter = new KeyPressToKeyConverter();
 		this.rawKeyInterceptors = [];
+		this.autoFlushInput = true;
 	}
 
 	start() {
@@ -77,6 +78,8 @@ class ConsoleTerminal extends Terminal {
 		}
 		else if(info.sequence) {
 			this.keyConverter.feedInput(info.sequence);
+			if(this.autoFlushInput)
+				this.keyConverter.flushSequences();
 			keys = this.keyConverter.fetchKeys();
 		}
 		else
