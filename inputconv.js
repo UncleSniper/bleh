@@ -12,7 +12,7 @@ class Stage {
 	}
 
 	get currentKey() {
-		return Object.create(this.getCurrentKey());
+		return this.getCurrentKey();
 	}
 
 	isInputLeaf() {
@@ -115,8 +115,7 @@ class MappingSingleCharConverter extends SingleCharConverter {
 	}
 
 	charToKey(inputChar) {
-		var key = this.keys[inputChar];
-		return key ? Object.create(key) : null;
+		return this.keys[inputChar] || null;
 	}
 
 }

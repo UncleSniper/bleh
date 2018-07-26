@@ -54,7 +54,7 @@ class KeyPressToKeyConverter {
 			this._beginSequences();
 		++this._currentDepth;
 		this._advanceSequences(input);
-		if(!this._currentDepth)
+		if(this._currentDepth == 1)
 			this._processSingles(input);
 		if(!this._stages.length)
 			this._endPaths();

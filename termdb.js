@@ -15,6 +15,17 @@ function mapseq(rawMap) {
 	});
 }
 
+function mapsing(rawMapper) {
+	return Object.create(rawMapper, {
+		map: {
+			value: function(keyStr, type, modifiers, value) {
+				this.putKey(keyStr, new Key(type, modifiers, value));
+				return this;
+			}
+		}
+	});
+}
+
 const db = Object.create(null);
 
 Object.assign(db, {
@@ -26,6 +37,9 @@ Object.assign(db, {
 			xtermSeqMap(smic.map);
 			conv.addInputConverter(smic);
 			conv.addSingleByteConverter(inputconv.MappingSingleCharConverter.ALTERNATE_BACKSPACE);
+			const mscc = new inputconv.MappingSingleCharConverter();
+			xtermSingles(mscc);
+			conv.addSingleByteConverter(mscc);
 			return conv;
 		}
 	}
@@ -46,6 +60,12 @@ function xtermSeqMap(map) {
 		.map('\u001b[21;2~', Key.FUNCTION, Key.SHIFT, 10)
 		.map('\u001b[23;2~', Key.FUNCTION, Key.SHIFT, 11)
 		.map('\u001b[24;2~', Key.FUNCTION, Key.SHIFT, 12)
+	;
+}
+
+function xtermSingles(mapper) {
+	mapsing(mapper)
+		.map('\u001e', Key.ENTER, Key.CTRL, '\n')
 	;
 }
 
