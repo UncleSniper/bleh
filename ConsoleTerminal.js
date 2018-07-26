@@ -1,21 +1,13 @@
-const Terminal = require('./terminal.js');
-const Key = Terminal.Key;
 const clic = require('cli-color');
 const readline = require('readline');
-const except = require('node-exceptions');
 const winsize = require('window-size');
 const termdb = require('./termdb.js');
-const SequenceMap = require('./seqmap.js');
-const KeyPressToKeyConverter = require('./console-keyconv.js');
 
-class NotATerminalException extends except.RuntimeException {
-
-	constructor(pts) {
-		super(pts + ' is not a terminal');
-		this.pts = pts;
-	}
-
-}
+const Terminal = require('./Terminal.js');
+const Key = Terminal.Key;
+const SequenceMap = require('./SequenceMap.js');
+const KeyPressToKeyConverter = require('./KeyPressToKeyConverter.js');
+const NotATerminalException = require('./NotATerminalException.js');
 
 class ConsoleTerminal extends Terminal {
 

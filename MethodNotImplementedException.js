@@ -10,6 +10,4 @@ class MethodNotImplementedException extends except.LogicalException {
 
 }
 
-module.exports = {
-	MethodNotImplementedException
-};
+module.exports = MethodNotImplementedException;

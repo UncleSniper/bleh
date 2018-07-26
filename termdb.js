@@ -1,8 +1,9 @@
-const Terminal = require('./terminal.js');
+const Terminal = require('./Terminal.js');
 const Key = Terminal.Key;
-const SequenceMap = require('./seqmap.js');
-const KeyPressToKeyConverter = require('./console-keyconv.js');
-const inputconv = require('./inputconv.js');
+const SequenceMap = require('./SequenceMap.js');
+const KeyPressToKeyConverter = require('./KeyPressToKeyConverter.js');
+const SequenceMapInputConverter = require('./SequenceMapInputConverter.js');
+const MappingSingleCharConverter = require('./MappingSingleCharConverter.js');
 
 function mapseq(rawMap) {
 	return Object.create(rawMap, {
@@ -33,11 +34,11 @@ Object.assign(db, {
 	'xterm': {
 		keyConverter: function() {
 			const conv = new KeyPressToKeyConverter();
-			const smic = new inputconv.SequenceMapInputConverter();
+			const smic = new SequenceMapInputConverter();
 			xtermSeqMap(smic.map);
 			conv.addInputConverter(smic);
-			conv.addSingleByteConverter(inputconv.MappingSingleCharConverter.ALTERNATE_BACKSPACE);
-			const mscc = new inputconv.MappingSingleCharConverter();
+			conv.addSingleByteConverter(MappingSingleCharConverter.ALTERNATE_BACKSPACE);
+			const mscc = new MappingSingleCharConverter();
 			xtermSingles(mscc);
 			conv.addSingleByteConverter(mscc);
 			return conv;

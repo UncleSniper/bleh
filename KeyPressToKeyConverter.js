@@ -1,4 +1,4 @@
-const Terminal = require('./terminal.js');
+const Terminal = require('./Terminal.js');
 const Key = Terminal.Key;
 
 class KeyPressToKeyConverter {
