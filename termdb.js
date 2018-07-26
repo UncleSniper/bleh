@@ -1,3 +1,5 @@
+const util = require('util');
+
 const Terminal = require('./Terminal.js');
 const Key = Terminal.Key;
 const SequenceMap = require('./SequenceMap.js');
@@ -27,9 +29,7 @@ function mapsing(rawMapper) {
 	});
 }
 
-const keyconvs = Object.create(null);
-
-Object.assign(keyconvs, {
+const keyconvs = Object.assign(Object.create(null), {
 
 	'xterm': function() {
 		const conv = new KeyPressToKeyConverter();
@@ -45,17 +45,84 @@ Object.assign(keyconvs, {
 
 });
 
-const db = Object.create(null);
+const rawAnsiEscapes = {
 
-Object.assign(db, {
+	// set cursor position
+	cup: function(row, colum) {
+		return util.format('\033[%d;%dH', row || 1, colum || 1);
+	},
+
+	// reset cursor position
+	home: '\033[H',
+
+	// cursor column back
+	cub1: '\b',
+
+	// cursor invisible
+	civis: '\033[?25l',
+
+	// cursor invisible
+	cvvis: '\033[?25h',
+
+	// clear to end of line
+	el: '\033[K',
+
+	// clear from beginning of line
+	el1: '\033[1k',
+
+	// clear whole line
+	el2: '\033[2k',
+
+	// reset attributes
+	sgr0: '\033[0m',
+
+	bold: '\033[1m',
+
+	dim: '\033[2m',
+
+	// standout mode
+	smso: '\033[3m',
+
+	underline: '\033[4m',
+
+	blink: '\033[5m',
+
+	// reverse mode
+	rev: '\033[7m',
+
+	// hidden
+	invis: '\033[8m'
+
+};
+
+const ansiEscapes = Object.freeze(rawAnsiEscapes);
+
+const rawAnsiEscapes256 = Object.assign(Object.create(rawAnsiEscapes), {
+	//TODO
+});
+
+const ansiEscapes256 = Object.freeze(rawAnsiEscapes256);
+
+const rawXTermSmcupRmcup = {
+	smcup: '\033[?1049h',
+	rmcup: '\033[?1049l'
+};
+
+const xtermSmcupRmcup = Object.freeze(rawXTermSmcupRmcup);
+
+const db = Object.assign(Object.create(null), {
 
 	'xterm': {
-		keyConverter: keyconvs.xterm
+		keyConverter: keyconvs.xterm,
+		control: Object.assign({}, rawAnsiEscapes, rawXTermSmcupRmcup)
+	},
+
+	'xterm-256color': {
+		keyConverter: keyconvs.xterm,
+		control: Object.assign({}, rawAnsiEscapes256, rawXTermSmcupRmcup)
 	}
 
 });
-
-alias('xterm', 'xterm-256color');
 
 function xtermSeqMap(map) {
 	mapseq(map)
@@ -191,5 +258,8 @@ module.exports = {
 	mapsing,
 	xtermSeqMap,
 	xtermSingles,
-	alias
+	alias,
+	ansiEscapes,
+	ansiEscapes256,
+	xtermSmcupRmcup
 };

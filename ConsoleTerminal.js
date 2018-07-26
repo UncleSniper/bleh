@@ -1,4 +1,3 @@
-const clic = require('cli-color');
 const readline = require('readline');
 const winsize = require('window-size');
 const termdb = require('./termdb.js');
