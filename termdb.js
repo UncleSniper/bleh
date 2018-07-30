@@ -6,6 +6,8 @@ const SequenceMap = require('./SequenceMap.js');
 const KeyPressToKeyConverter = require('./KeyPressToKeyConverter.js');
 const SequenceMapInputConverter = require('./SequenceMapInputConverter.js');
 const MappingSingleCharConverter = require('./MappingSingleCharConverter.js');
+const IllegalColorIndexException = require('./IllegalColorIndexException.js');
+const colormap = require('./colormap.js');
 
 function mapseq(rawMap) {
 	return Object.create(rawMap, {
@@ -44,6 +46,44 @@ const keyconvs = Object.assign(Object.create(null), {
 	}
 
 });
+
+function checkColorIndex(color) {
+	if(typeof color !== 'number')
+		throw new IllegalColorIndexException(color);
+	color = parseInt(color);
+	if(color < 0 || color > 255)
+		throw new IllegalColorIndexException(color);
+	return color;
+}
+
+function setANSIFG16(color) {
+	if(color === null)
+		return '\033[39m';
+	color = colormap[checkColorIndex(color)];
+	if(color < 8)
+		return util.format('\033[%dm', 30 + color);
+	else
+		return util.format('\033[%d;1m', 22 + color);
+}
+
+function setANSIBG16(color) {
+	if(color === null)
+		return '\033[49m';
+	color = colormap[checkColorIndex(color)];
+	return util.format('\033[%dm', 40 + (color < 8 ? color : color - 8));
+}
+
+function setANSIFG256(color) {
+	if(color === null)
+		return '\033[39m';
+	return util.format('\033[38;5;%dm', checkColorIndex(color));
+}
+
+function setANSIBG256(color) {
+	if(color === null)
+		return '\033[49m';
+	return util.format('\033[48;5;%dm', checkColorIndex(color));
+}
 
 const rawAnsiEscapes = {
 
@@ -97,12 +137,6 @@ const rawAnsiEscapes = {
 
 const ansiEscapes = Object.freeze(rawAnsiEscapes);
 
-const rawAnsiEscapes256 = Object.assign(Object.create(rawAnsiEscapes), {
-	//TODO
-});
-
-const ansiEscapes256 = Object.freeze(rawAnsiEscapes256);
-
 const rawXTermSmcupRmcup = {
 	smcup: '\033[?1049h',
 	rmcup: '\033[?1049l'
@@ -114,12 +148,16 @@ const db = Object.assign(Object.create(null), {
 
 	'xterm': {
 		keyConverter: keyconvs.xterm,
-		control: Object.assign({}, rawAnsiEscapes, rawXTermSmcupRmcup)
+		control: Object.assign({}, rawAnsiEscapes, rawXTermSmcupRmcup),
+		setFG: setANSIFG16,
+		setBG: setANSIBG16
 	},
 
 	'xterm-256color': {
 		keyConverter: keyconvs.xterm,
-		control: Object.assign({}, rawAnsiEscapes256, rawXTermSmcupRmcup)
+		control: Object.assign({}, rawAnsiEscapes, rawXTermSmcupRmcup),
+		setFG: setANSIFG256,
+		setBG: setANSIBG256
 	}
 
 });
@@ -260,6 +298,7 @@ module.exports = {
 	xtermSingles,
 	alias,
 	ansiEscapes,
-	ansiEscapes256,
-	xtermSmcupRmcup
+	xtermSmcupRmcup,
+	setANSIFG16,
+	setANSIBG16
 };
