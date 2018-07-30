@@ -1,22 +1,55 @@
 const readline = require('readline');
 const winsize = require('window-size');
-const termdb = require('./termdb.js');
+const except = require('node-exceptions');
 
 const Terminal = require('./Terminal.js');
 const Key = Terminal.Key;
 const SequenceMap = require('./SequenceMap.js');
 const KeyPressToKeyConverter = require('./KeyPressToKeyConverter.js');
 const NotATerminalException = require('./NotATerminalException.js');
+const ClipStackUnderrunException = require('./ClipStackUnderrunException.js');
+const termdb = require('./termdb.js');
+
+class Desire {
+
+	constructor(text, fg, bg, attributes) {
+		this.text = text;
+		this.fg = fg;
+		this.bg = bg;
+		this.attributes = attributes;
+	}
+
+	sameAttributesAs(other) {
+		return this.fg == other.fg && this.bg == other.bg && this.attributes == other.attributes;
+	}
+
+	matchesAttributes(fg, bg, attributes) {
+		return this.fg == fg && this.bg == bg && this.attributes == attributes;
+	}
+
+}
+
+Desire.ALL_ATTRIBUTES
+	= Terminal.BOLD
+	| Terminal.DIM
+	| Terminal.STANDOUT
+	| Terminal.UNDERLINE
+	| Terminal.BLINK
+	| Terminal.REVERSE
+	| Terminal.HIDDEN
+
+const LINEBREAK_RE = /(?:\r?\n|\r)/;
 
 class ConsoleTerminal extends Terminal {
 
 	constructor(type, warningChannel) {
 		super();
-		this.width = winsize.width;
-		this.height = winsize.height;
+		this._width = winsize.width;
+		this._height = winsize.height;
 		process.stdout.on('resize', () => {
+			var oldWidth = this._width, oldHeight = this._height;
 			this.updateSize();
-			this.emit('resize', this.width, this.height);
+			this.emit('resize', this._width, this._height, oldWidth, oldHeight);
 		});
 		if(!type)
 			type = process.env.TERM;
@@ -35,6 +68,16 @@ class ConsoleTerminal extends Terminal {
 			this.keyConverter = new KeyPressToKeyConverter();
 		this.rawKeyInterceptors = [];
 		this.autoFlushInput = true;
+		this._desiredLines = [];
+		const emptyLine = ' '.repeat(this._width);
+		var i;
+		for(i = 0; i < this._height; ++i)
+			this._desiredLines.push(this.width ? [new Desire(emptyLine, 7, 0, 0)] : []);
+		this.clipStack = [];
+		this._fg = 7;
+		this._bg = 0;
+		this._attributes = 0;
+		this.row = this.column = 0;
 	}
 
 	start() {
@@ -56,8 +99,24 @@ class ConsoleTerminal extends Terminal {
 
 	updateSize() {
 		const spec = winsize.get();
-		this.width = spec.width;
-		this.height = spec.height;
+		this._width = spec.width;
+		this._height = spec.height;
+	}
+
+	get width() {
+		return this._width;
+	}
+
+	set width(width) {
+		throw new except.DomainException('Cannot set terminal width');
+	}
+
+	get height() {
+		return this._height;
+	}
+
+	set height(height) {
+		throw new except.DomainException('Cannot set terminal height');
 	}
 
 	_decodeKeys(name, info) {
@@ -111,6 +170,209 @@ class ConsoleTerminal extends Terminal {
 		return false;
 	}
 
+	pushClip(rect) {
+		if(this.clipStack.length)
+			this.clipStack.push(this.clipStack[this.clipStack.length - 1].intersect(rect));
+		else
+			this.clipStack.push(rect);
+	}
+
+	popClip() {
+		if(this.clipStack.length)
+			return this.clipStack.pop();
+		else
+			throw new ClipStackUnderrunException();
+	}
+
+	effectiveClip() {
+		const size = new Rect(0, 0, this._width, this._height);
+		if(this.clipStack.length)
+			return this.clipStack[this.clipStack.length - 1].intersect(size);
+		else
+			return size;
+	}
+
+	getFG() {
+		return this._fg;
+	}
+
+	setFG(fg) {
+		return this._fg = this._specifier.prepareColor(fg);
+	}
+
+	getBG() {
+		return this._bg;
+	}
+
+	setBG(bg) {
+		return this._bg = this._specifier.prepareColor(bg);
+	}
+
+	getAttributes() {
+		return this._attributes;
+	}
+
+	setAttributes(attributes) {
+		return this._attributes = attributes & Desire.ALL_ATTRIBUTES;
+	}
+
+	move(column, row) {
+		this.column = column;
+		this.row = row;
+	}
+
+	write(text) {
+		const lines = text.split(LINEBREAK_RE);
+		const bounds = this.effectiveClip();
+		var i;
+		for(i = 0; i < lines.length; ++i) {
+			if(i) {
+				++this.row;
+				this.column = 0;
+			}
+			this._write(lines[i], bounds);
+		}
+	}
+
+	_write(text, bounds) {
+		if(!text.length)
+			return;
+		if(this.row < bounds.y1 || this.row >= bounds.y2)
+			return;
+		if(this.column >= bounds.x2)
+			return;
+		var skip;
+		if(this.column < bounds.x1) {
+			skip = bounds.x1 - this.column;
+			if(skip >= text.length)
+				return;
+			text = text.substr(skip);
+			this.column += skip;
+		}
+		if(this.column + text.length > this._width)
+			text = text.substr(0, this._width - this.column);
+		const dirtStart = this.row * this._width + this.column;
+		const dline = this._desiredLines[this.row];
+		var skipWidth = 0, desire = null;
+		for(skip = 0; skip < dline.length; ++skip) {
+			desire = dline[skip];
+			if(skipWidth + desire.text.length > this.column)
+				break;
+			skipWidth += desire.text.length;
+		}
+		var skipOffset = this.column - skipWidth;
+		var dwidth, checkMergeForward, checkMergeBackward, nextDesire, tailDesire, prevDesire;
+		for(;;) {
+			dwidth = desire.text.length;
+			checkMergeForward = checkMergeBackward = false;
+			// match: covers entire desire? => replace
+			if(!skipOffset && text.length >= dwidth) {
+				desire.text = text.substr(0, dwidth);
+				desire.fg = this._fg;
+				desire.bg = this._bg;
+				desire.attributes = this._attributes;
+				text = text.substr(dwidth);
+				this.column += dwidth;
+				skipWidth += dwidth;
+				checkMergeForward = checkMergeBackward = true;
+			}
+			// covers suffix of desire?
+			else if(skipOffset && skipOffset + text.length >= dwidth) {
+				// same attributes? => alter
+				if(desire.matchesAttributes(this._fg, this._bg, this._attributes)) {
+					desire.text = desire.text.substr(0, skipOffset) + text.substring(skipOffset, dwidth);
+					this.column += dwidth - skipOffset;
+					text = text.substr(dwidth);
+					if(!text.length)
+						break;
+					skipOffset = 0;
+					skipWidth += dwidth;
+					desire = dline[++skip];
+					continue;
+				}
+				// different attributes => split
+				else {
+					// will trigger merge forward? => move
+					if(skip + 1 < dline.length && (nextDesire = dline[skip + 1])
+							.matchesAttributes(this._fg, this._bg, this._attributes)) {
+						desire.text = desire.text.substr(0, skipOffset);
+						nextDesire.text = text.substr(dwidth - skipOffset) + nextDesire.text;
+						skipWidth += skipOffset;
+						skipOffset = 0;
+						++skip;
+						desire = nextDesire;
+						continue;
+					}
+					// will not trigger merge forward => split forward
+					else {
+						nextDesire = new Desire(skipOffset + text.length > dwidth
+								? text.substring(skipOffset, dwidth) : text, this._fg, this._bg, this._attributes);
+						desire.text = desire.text.substr(0, skipOffset);
+						text = text.substr(nextDesire.text.length);
+						dline.splice(skip + 1, 0, nextDesire);
+						this.column = skipWidth + desire.text.length + nextDesire.text.length;
+						if(!text.length)
+							break;
+						skipOffset = 0;
+						skipWidth = this.column;
+						desire = dline[skip += 2];
+						continue;
+					}
+				}
+			}
+			// covers prefix of desire?
+			else if(!skipOffset && text.length < dwidth) {
+				// same attributes? => alter
+				if(desire.matchesAttributes(this._fg, this._bg, this._attributes)) {
+					desire.text = text + desire.text.substr(text.length);
+					this.column += text.length;
+					break;
+				}
+				// different attributes => split
+				else {
+					nextDesire = new Desire(text, this._fg, this._bg, this._attributes);
+					desire.text = desire.text.substr(text.length);
+					dline.splice(skip, 0, nextDesire);
+					this.column += text.length;
+					text = '';
+					checkMergeBackward = true;
+				}
+			}
+			// covers infix of desire
+			else {
+				// same attributes? => alter
+				if(desire.matchesAttributes(this._fg, this._bg, this._attributes)) {
+					desire.text = desire.text.substr(0, skipOffset) + text
+							+ desire.text.substr(skipOffset + text.length);
+					break;
+				}
+				// different attributes => split
+				else {
+					nextDesire = new Desire(text, this._fg, this._bg, this._attributes);
+					tailDesire = new Desire(desire.text.substr(skipOffset + text.length),
+							desire.fg, desire.bg, desire.attributes);
+					desire.text = desire.text.substr(0, skipOffset);
+					dline.splice(skip, 1, desire, nextDesire, tailDesire);
+					break;
+				}
+			}
+			// now check for merges
+			if(checkMergeBackward && skip) {
+				prevDesire = dline[skip - 1];
+				if(desire.sameAttributesAs(prevDesire)) {
+					prevDesire.text += desire.text;
+					dline.splice(skip, 1);
+				}
+			}
+			if(text.length)
+				continue;
+			if(checkMergeForward) {
+				//TODO
+			}
+			break;
+		}
+	}
+
 	static _convertPreDecodedKey(name, info) {
 		if(!info.name)
 			return null;
@@ -145,6 +407,8 @@ class ConsoleTerminal extends Terminal {
 	}
 
 }
+
+ConsoleTerminal.Desire = Desire;
 
 ConsoleTerminal.DEFAULT_TYPE = 'xterm';
 

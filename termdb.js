@@ -85,6 +85,12 @@ function setANSIBG256(color) {
 	return util.format('\033[48;5;%dm', checkColorIndex(color));
 }
 
+function prepareColor16(color) {
+	return colormap[checkColorIndex(color)];
+}
+
+const prepareColor256 = checkColorIndex;
+
 const rawAnsiEscapes = {
 
 	// set cursor position
@@ -150,14 +156,16 @@ const db = Object.assign(Object.create(null), {
 		keyConverter: keyconvs.xterm,
 		control: Object.assign({}, rawAnsiEscapes, rawXTermSmcupRmcup),
 		setFG: setANSIFG16,
-		setBG: setANSIBG16
+		setBG: setANSIBG16,
+		prepareColor: prepareColor16
 	},
 
 	'xterm-256color': {
 		keyConverter: keyconvs.xterm,
 		control: Object.assign({}, rawAnsiEscapes, rawXTermSmcupRmcup),
 		setFG: setANSIFG256,
-		setBG: setANSIBG256
+		setBG: setANSIBG256,
+		prepareColor: prepareColor256
 	}
 
 });
@@ -300,5 +308,9 @@ module.exports = {
 	ansiEscapes,
 	xtermSmcupRmcup,
 	setANSIFG16,
-	setANSIBG16
+	setANSIBG16,
+	setANSIFG256,
+	setANSIBG256,
+	prepareColor16,
+	prepareColor256
 };

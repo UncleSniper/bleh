@@ -1,5 +1,7 @@
 const EventEmitter = require('events');
 
+const MethodNotImplementedException = require('./MethodNotImplementedException');
+
 class Terminal extends EventEmitter {
 
 	constructor() {
@@ -15,6 +17,152 @@ class Terminal extends EventEmitter {
 	popRawKeyInterceptor() {}
 
 	removeRawKeyInterceptor(interceptor) {}
+
+	pushClip(rect) {
+		throw new MethodNotImplementedException(this, 'pushClip');
+	}
+
+	popClip() {
+		throw new MethodNotImplementedException(this, 'popClip');
+	}
+
+	effectiveClip() {
+		throw new MethodNotImplementedException(this, 'effectiveClip');
+	}
+
+	getFG() {
+		throw new MethodNotImplementedException(this, 'getFG');
+	}
+
+	get fg() {
+		return this.getFG();
+	}
+
+	setFG(fg) {
+		throw new MethodNotImplementedException(this, 'setFG');
+	}
+
+	set fg(fg) {
+		return this.setFG(fg);
+	}
+
+	getBG() {
+		throw new MethodNotImplementedException(this, 'getBG');
+	}
+
+	get bg() {
+		return this.getBG();
+	}
+
+	setBG(bg) {
+		throw new MethodNotImplementedException(this, 'setBG');
+	}
+
+	set bg(bg) {
+		return this.setBG(bg);
+	}
+
+	getAttributes() {
+		throw new MethodNotImplementedException(this, 'getAttributes');
+	}
+
+	get attributes() {
+		return this.getAttributes();
+	}
+
+	setAttributes(attributes) {
+		throw new MethodNotImplementedException(this, 'setAttributes');
+	}
+
+	set attributes(attributes) {
+		return this.setAttributes(attributes);
+	}
+
+	hasAttributes(mask) {
+		return (this.getAttributes() & mask) === mask;
+	}
+
+	addAttributes(mask) {
+		return this.setAttributes(this.getAttributes() | mask);
+	}
+
+	removeAttributes(mask) {
+		return this.setAttributes(this.getAttributes() & ~mask);
+	}
+
+	setAttributeMask(mask, value) {
+		const attributes = this.getAttributes();
+		if(value)
+			attributes |= mask;
+		else
+			attributes &= ~mask;
+		this.setAttributes(attributes);
+		return value;
+	}
+
+	get bold() {
+		return this.hasAttributes(Terminal.BOLD);
+	}
+
+	set bold(bold) {
+		return this.setAttributeMask(Terminal.BOLD, bold);
+	}
+
+	get dim() {
+		return this.hasAttributes(Terminal.DIM);
+	}
+
+	set dim(dim) {
+		return this.setAttributeMask(Terminal.DIM, dim);
+	}
+
+	get standout() {
+		return this.hasAttributes(Terminal.STANDOUT);
+	}
+
+	set standout(standout) {
+		return this.setAttributeMask(Terminal.STANDOUT, standout);
+	}
+
+	get underline() {
+		return this.hasAttributes(Terminal.UNDERLINE);
+	}
+
+	set underline(underline) {
+		return this.setAttributeMask(Terminal.UNDERLINE, underline);
+	}
+
+	get blink() {
+		return this.hasAttributes(Terminal.BLINK);
+	}
+
+	set blink(blink) {
+		return this.setAttributeMask(Terminal.BLINK, blink);
+	}
+
+	get reverse() {
+		return this.hasAttributes(Terminal.REVERSE);
+	}
+
+	set reverse(reverse) {
+		return this.setAttributeMask(Terminal.REVERSE, reverse);
+	}
+
+	get hidden() {
+		return this.hasAttributes(Terminal.HIDDEN);
+	}
+
+	set hidden(hidden) {
+		return this.setAttributeMask(Terminal.HIDDEN, hidden);
+	}
+
+	move(column, row) {
+		throw new MethodNotImplementedException(this, 'move');
+	}
+
+	write(text) {
+		throw new MethodNotImplementedException(this, 'write');
+	}
 
 }
 
@@ -103,6 +251,14 @@ Terminal.asciiBoxChars = {
 	doubleVertCross: '+',
 	doubleCross: '+'
 };
+
+Terminal.BOLD      = 0001;
+Terminal.DIM       = 0002;
+Terminal.STANDOUT  = 0004;
+Terminal.UNDERLINE = 0010;
+Terminal.BLINK     = 0020;
+Terminal.REVERSE   = 0040;
+Terminal.HIDDEN    = 0100;
 
 class Key {
 
