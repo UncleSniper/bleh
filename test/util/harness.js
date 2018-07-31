@@ -4,16 +4,23 @@ const expect = require('chai').expect;
 
 const MethodNotImplementedException = require('../../lib/MethodNotImplementedException.js');
 
+const classColor = '\u001b[38;5;39m';
+const methodColor = '\u001b[38;5;34m';
+const propertyColor = '\u001b[38;5;208m';
+const hashColor = '\u001b[38;5;205m';
+const parenColor = '\u001b[38;5;93m';
+const endColor = '\u001b[39m';
+
 Function.prototype.test = function() {
 	var name;
 	if(!this.name)
 		name = '?';
 	else if(this.name.startsWith('t_'))
-		name = this.name.substr(2);
+		name = classColor + this.name.substr(2) + endColor;
 	else if(this.name.startsWith('tm_'))
-		name = '#' + this.name.substr(3) + '()';
+		name = hashColor + '#' + methodColor +this.name.substr(3) + parenColor + '()' + endColor;
 	else if(this.name.startsWith('tp_'))
-		name = '#' + this.name.substr(3);
+		name = hashColor + '#' + propertyColor + this.name.substr(3) + endColor;
 	else
 		name = this.name;
 	Function.mochaDescribe(name, this);
