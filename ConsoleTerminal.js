@@ -364,12 +364,17 @@ class ConsoleTerminal extends Terminal {
 				if(desire.sameAttributesAs(prevDesire)) {
 					prevDesire.text += desire.text;
 					dline.splice(skip, 1);
+					desire = prevDesire;
 				}
 			}
 			if(text.length)
 				continue;
-			if(checkMergeForward) {
-				//TODO
+			if(checkMergeForward && skip + 1 < dline.length) {
+				nextDesire = dline[skip + 1];
+				if(desire.sameAttributesAs(nextDesire)) {
+					desire.text += nextDesire.text;
+					dline.splice(skip + 1, 1);
+				}
 			}
 			break;
 		}
