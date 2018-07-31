@@ -1,3 +1,5 @@
+'use strict';
+
 const util = require('util');
 
 const Terminal = require('./Terminal.js');
@@ -58,31 +60,31 @@ function checkColorIndex(color) {
 
 function setANSIFG16(color) {
 	if(color === null)
-		return '\033[39m';
+		return '\u001b[39m';
 	color = colormap[checkColorIndex(color)];
 	if(color < 8)
-		return util.format('\033[%dm', 30 + color);
+		return util.format('\u001b[%dm', 30 + color);
 	else
-		return util.format('\033[%d;1m', 22 + color);
+		return util.format('\u001b[%d;1m', 22 + color);
 }
 
 function setANSIBG16(color) {
 	if(color === null)
-		return '\033[49m';
+		return '\u001b[49m';
 	color = colormap[checkColorIndex(color)];
-	return util.format('\033[%dm', 40 + (color < 8 ? color : color - 8));
+	return util.format('\u001b[%dm', 40 + (color < 8 ? color : color - 8));
 }
 
 function setANSIFG256(color) {
 	if(color === null)
-		return '\033[39m';
-	return util.format('\033[38;5;%dm', checkColorIndex(color));
+		return '\u001b[39m';
+	return util.format('\u001b[38;5;%dm', checkColorIndex(color));
 }
 
 function setANSIBG256(color) {
 	if(color === null)
-		return '\033[49m';
-	return util.format('\033[48;5;%dm', checkColorIndex(color));
+		return '\u001b[49m';
+	return util.format('\u001b[48;5;%dm', checkColorIndex(color));
 }
 
 function prepareColor16(color) {
@@ -95,57 +97,57 @@ const rawAnsiEscapes = {
 
 	// set cursor position
 	cup: function(row, colum) {
-		return util.format('\033[%d;%dH', row || 1, colum || 1);
+		return util.format('\u001b[%d;%dH', row || 1, colum || 1);
 	},
 
 	// reset cursor position
-	home: '\033[H',
+	home: '\u001b[H',
 
 	// cursor column back
 	cub1: '\b',
 
 	// cursor invisible
-	civis: '\033[?25l',
+	civis: '\u001b[?25l',
 
 	// cursor invisible
-	cvvis: '\033[?25h',
+	cvvis: '\u001b[?25h',
 
 	// clear to end of line
-	el: '\033[K',
+	el: '\u001b[K',
 
 	// clear from beginning of line
-	el1: '\033[1k',
+	el1: '\u001b[1k',
 
 	// clear whole line
-	el2: '\033[2k',
+	el2: '\u001b[2k',
 
 	// reset attributes
-	sgr0: '\033[0m',
+	sgr0: '\u001b[0m',
 
-	bold: '\033[1m',
+	bold: '\u001b[1m',
 
-	dim: '\033[2m',
+	dim: '\u001b[2m',
 
 	// standout mode
-	smso: '\033[3m',
+	smso: '\u001b[3m',
 
-	underline: '\033[4m',
+	underline: '\u001b[4m',
 
-	blink: '\033[5m',
+	blink: '\u001b[5m',
 
 	// reverse mode
-	rev: '\033[7m',
+	rev: '\u001b[7m',
 
 	// hidden
-	invis: '\033[8m'
+	invis: '\u001b[8m'
 
 };
 
 const ansiEscapes = Object.freeze(rawAnsiEscapes);
 
 const rawXTermSmcupRmcup = {
-	smcup: '\033[?1049h',
-	rmcup: '\033[?1049l'
+	smcup: '\u001b[?1049h',
+	rmcup: '\u001b[?1049l'
 };
 
 const xtermSmcupRmcup = Object.freeze(rawXTermSmcupRmcup);

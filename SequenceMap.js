@@ -1,3 +1,5 @@
+'use strict';
+
 class Node {
 
 	constructor(map, parent, key, value, name) {

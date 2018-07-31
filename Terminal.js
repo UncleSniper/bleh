@@ -1,3 +1,5 @@
+'use strict';
+
 const EventEmitter = require('events');
 
 const MethodNotImplementedException = require('./MethodNotImplementedException');
@@ -252,13 +254,13 @@ Terminal.asciiBoxChars = {
 	doubleCross: '+'
 };
 
-Terminal.BOLD      = 0001;
-Terminal.DIM       = 0002;
-Terminal.STANDOUT  = 0004;
-Terminal.UNDERLINE = 0010;
-Terminal.BLINK     = 0020;
-Terminal.REVERSE   = 0040;
-Terminal.HIDDEN    = 0100;
+Terminal.BOLD      = 0x01;
+Terminal.DIM       = 0x02;
+Terminal.STANDOUT  = 0x04;
+Terminal.UNDERLINE = 0x08;
+Terminal.BLINK     = 0x10;
+Terminal.REVERSE   = 0x20;
+Terminal.HIDDEN    = 0x40;
 
 class Key {
 

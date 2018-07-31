@@ -1,3 +1,5 @@
+'use strict';
+
 const except = require('node-exceptions');
 
 class ClipStackUnderrunException extends except.RuntimeException {

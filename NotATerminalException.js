@@ -1,3 +1,5 @@
+'use strict';
+
 const except = require('node-exceptions');
 
 class NotATerminalException extends except.RuntimeException {

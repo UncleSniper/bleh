@@ -1,3 +1,5 @@
+'use strict';
+
 class Vect {
 
 	constructor(x, y) {

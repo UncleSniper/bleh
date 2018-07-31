@@ -1,3 +1,5 @@
+'use strict';
+
 const SequenceMap = require('./SequenceMap.js');
 const InputConverter = require('./InputConverter.js');
 

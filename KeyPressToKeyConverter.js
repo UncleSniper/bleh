@@ -1,3 +1,5 @@
+'use strict';
+
 const Terminal = require('./Terminal.js');
 const Key = Terminal.Key;
 

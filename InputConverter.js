@@ -1,3 +1,5 @@
+'use strict';
+
 const MethodNotImplementedException = require('./MethodNotImplementedException.js');
 
 class Stage {

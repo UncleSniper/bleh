@@ -1,3 +1,5 @@
+'use strict';
+
 const readline = require('readline');
 const winsize = require('window-size');
 const except = require('node-exceptions');
