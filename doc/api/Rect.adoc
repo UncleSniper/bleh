@@ -1,0 +1,223 @@
+[[Rect]]
+class +Rect+
+~~~~~~~~~~~~
+
+[source,javascript]
+--------
+const Rect = require('bleh-editor').Rect;
+--------
+
+2D rectangle. Used to indicate rectangular regions, notably on the terminal screen.
+The fundamental denotation is an origin (corner) and a size (width and height),
+designated in a left-handed coordinate system (as arising from the ``columns and rows''
+notion of the terminal). Generally, the left and upper bounds (i.e. the origin) are
+deemed inclusive, whereas the right and lower bounds are deemed exclusive. Thus:
+
+* left bound = +x+
+* right bound = +x + width+
+* upper bound = +y+
+* lower bound = +y + height+
+
+From this, we can see that the width and height are intended to be non-negative,
+which this class enforces at all times.
+
+[options="header,autowidth"]
+|===
+3+| Properties
+| <<Rect.x,+x+>> | +int+ | the x (column) coordinate of the origin
+| <<Rect.y,+y+>> | +int+ | the y (row) coordinate of the origin
+| <<Rect.width,+width+>> | +int+ | the width of the rectangle (non-negative)
+| <<Rect.height,+height+>> | +int+ | the height of the rectangle (non-negative)
+| <<Rect.column,+column+>> | +int+ | alias for +x+
+| <<Rect.row,+row+>> | +int+ | alias for +y+
+| <<Rect.x1,+x1+>> | +int+ | alias for +x+
+| <<Rect.x2,+x2+>> | +int+ | right bound of the rectangle
+| <<Rect.y1,+y1+>> | +int+ | alias for +y+
+| <<Rect.y2,+y2+>> | +int+ | lower bound of the rectangle
+|===
+
+[options="header,autowidth"]
+|===
+3+| Methods
+| <<Rect.constructor,+constructor+>> | +int x, int y, int width, int height => Rect+ | initialize rectangle with given origin and size
+| <<Rect.constrainInto,+constrainInto+>> | +int containerWidth, int containerHeight => void+ | modify rectangle to be contained in given area
+| <<Rect.intersect,+intersect+>> | +Rect rect => Rect+ | compute intersection of two rectangles
+|===
+
+[[Rect.x]]
+Property +x+
+^^^^^^^^^^^^
+
+[source,javascript]
+--------
+int x
+--------
+
+The x (column) coordinate of the origin, indicating the left bound of the rectangle.
+Zero indicates the leftmost column.
+
+[[Rect.y]]
+Property +y+
+^^^^^^^^^^^^
+
+[source,javascript]
+--------
+int y
+--------
+
+The y (row) coordinate of the origin, indicating the upper bound of the rectangle.
+Zero indicates the topmost row.
+
+[[Rect.width]]
+Property +width+
+^^^^^^^^^^^^^^^^
+
+[source,javascript]
+--------
+int width
+--------
+
+The width of the rectangle. The rectangle thus extends from +this.x+ (inclusively)
+to +this.x + this.width+ (exclusively). In order to ensure consistency,
+this property is kept non-negative. Assigning a negative number will thus assign
+the absolute width and move the <<Rect.x,+x+>> coordinate left by that same
+absolute width.
+
+[[Rect.height]]
+Property +height+
+^^^^^^^^^^^^^^^^^
+
+[source,javascript]
+--------
+int height
+--------
+
+The height of the rectangle. The rectangle thus extends from +this.y+ (inclusively)
+to +this.y + this.height+ (exclusively). In order to ensure consistency,
+this property is kept non-negative. Assigning a negative number will thus assign
+the absolute height and move the <<Rect.y,+y+>> coordinate up by that same
+absolute height.
+
+[[Rect.column]]
+Property +column+
+^^^^^^^^^^^^^^^^^
+
+[source,javascript]
+--------
+int column
+--------
+
+Alias for <<Rect.x,+x+>>.
+
+[[Rect.row]]
+Property +row+
+^^^^^^^^^^^^^^
+
+[source,javascript]
+--------
+int row
+--------
+
+Alias for <<Rect.y,+y+>>.
+
+[[Rect.x1]]
+Property +x1+
+^^^^^^^^^^^^^
+
+[source,javascript]
+--------
+int x1
+--------
+
+Alias for <<Rect.x,+x+>>.
+
+[[Rect.x2]]
+Property +x2+
+^^^^^^^^^^^^^
+
+[source,javascript]
+--------
+int x2
+--------
+
+Right bound of the rectangle, i.e. +this.x + this.width+.
+Analogously to the constructor, the width is kept non-negative
+by swapping bounds as necessary. Thus, if a coordinate left (i.e. smaller)
+of <<Rect.x,+x+>> is assigned, +x+ is set to the assigned
+number, and the width is set to the absolute distance between
+the old and new +x+. If a coordinate not left of +x+ is
+assigned, +x+ is retained and only the <<Rect.width,+width+>>
+is set accordingly.
+
+[[Rect.y1]]
+Property +y1+
+^^^^^^^^^^^^^
+
+[source,javascript]
+--------
+int y1
+--------
+
+Alias for <<Rect.y,+y+>>.
+
+[[Rect.y2]]
+Property +y2+
+^^^^^^^^^^^^^
+
+[source,javascript]
+--------
+int y2
+--------
+
+Lower bound of the rectangle, i.e. +this.y + this.height+.
+Analogously to the constructor, the height is kept non-negative
+by swapping bounds as necessary. Thus, if a coordinate above (i.e. smaller)
+of <<Rect.y,+y+>> is assigned, +y+ is set to the assigned
+number, and the height is set to the absolute distance between
+the old and new +y+. If a coordinate not above +y+ is
+assigned, +y+ is retained and only the <<Rect.height,+height+>>
+is set accordingly.
+
+[[Rect.constructor]]
+Constructor
+^^^^^^^^^^^
+
+[source,javascript]
+--------
+new Rect(x, y, width, height)
+--------
+
+Initialize rectangle with given origin and size. The +(x, y)+ coordinates
+normally indicate the left (i.e. low x) upper (i.e. low y) corner, but this
+notion is based on the premise that the size (width and height) cannot be negative.
+Thus, if a negative width and/or height is given, the corresponding bounds
+are swapped, causing the given origin coordinate to indicate the right/lower
+bound instead (and allowing the size to once again be made non-negative).
+
+.Parameters
+* +int x+ -- the x (column) coordinate of the origin
+* +int y+ -- the y (row) coordinate of the origin
+* +int width+ -- the width of the rectangle
+* +int height+ -- the height of the rectangle
+
+[[Rect.constrainInto]]
+Method +constrainInto+
+^^^^^^^^^^^^^^^^^^^^^^
+
+[source,javascript]
+--------
+Rect.prototype.constrainInto = function(containerWidth, containerHeight)
+--------
+
+TODO.
+
+[[Rect.intersect]]
+Method +intersect+
+^^^^^^^^^^^^^^^^^^
+
+[source,javascript]
+--------
+Rect.prototype.intersect = function(rect)
+--------
+
+TODO.

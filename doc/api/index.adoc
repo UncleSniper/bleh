@@ -1,0 +1,7 @@
+The Bleh! text editor core
+==========================
+Simon Bausch <simon@bausch-alfdorf.de>
+:toc:
+:numbered:
+
+include::terms.adoc[]

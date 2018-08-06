@@ -1,0 +1,88 @@
+[[Vect]]
+class +Vect+
+~~~~~~~~~~~~
+
+[source,javascript]
+--------
+const Vect = require('bleh-editor').Vect;
+--------
+
+2D vector. Used to indicate points, most notably terminal row + column locations.
+Since the coordinates are meant to coincide with the columns and rows of the
+terminal, the underlying coordinate system is left-handed, causing the directions
+of the axes to coincide with the European/American reading direction (top-to-bottom
+major, left-to-right minor).
+
+[options="header,autowidth"]
+|===
+3+| Properties
+| <<Vect.x,+x+>> | +int+ | the x (column) coordinate
+| <<Vect.y,+y+>> | +int+ | the y (row) coordinate
+| <<Vect.column,+column+>> | +int+ | alias for +x+
+| <<Vect.row,+row+>> | +int+ | alias for +y+
+|===
+
+[options="header,autowidth"]
+|===
+3+| Methods
+| <<Vect.constructor,+constructor+>> | +int x, int y => Vect+ | initialize vector with given coordinates
+|===
+
+[[Vect.x]]
+Property +x+
+^^^^^^^^^^^^
+
+[source,javascript]
+--------
+int x
+--------
+
+The x (column) coordinate. Zero indicates the leftmost column.
+
+[[Vector.y]]
+Property +y+
+^^^^^^^^^^^^
+
+[source,javascript]
+--------
+int y
+--------
+
+The y (row) coordinate. Zero indicates the topmost row.
+
+[[Vect.column]]
+Property +column+
+^^^^^^^^^^^^^^^^^
+
+[source,javascript]
+--------
+int column
+--------
+
+Alias for <<Vect.x,+x+>>.
+
+[[Vect.row]]
+Property +row+
+^^^^^^^^^^^^^^
+
+[source,javascript]
+--------
+int row
+--------
+
+Alias for <<Vect.y,+y+>>.
+
+[[Vect.constructor]]
+Constructor
+^^^^^^^^^^^
+
+[source,javascript]
+--------
+new Vect(x, y)
+--------
+
+Initialize vector with given coordinates.
+
+.Parameters
+* +int x+ -- the x (column) coordinate
+* +int y+ -- the y (row) coordinate

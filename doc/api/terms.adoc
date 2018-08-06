@@ -1,0 +1,9 @@
+Terminals
+---------
+Since Bleh! is meant to be a text-mode application at heart, the most basic
+UI abstraction is that of a _terminal_: A matrix of attributed characters
+that can be synchronized with the screen and that receives keystrokes from
+the keyboard.
+
+include::Vect.adoc[]
+include::Rect.adoc[]
