@@ -1,0 +1,10 @@
+[[colormap]]
+configuration object +colormap+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[source,javascript]
+--------
+const colormap = require('bleh-editor').colormap;
+--------
+
+TODO.

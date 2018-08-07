@@ -4,4 +4,6 @@ Simon Bausch <simon@bausch-alfdorf.de>
 :toc:
 :numbered:
 
+include::common.adoc[]
+
 include::terms.adoc[]

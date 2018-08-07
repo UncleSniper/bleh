@@ -1,0 +1,10 @@
+[[ConsoleTerminal]]
+class +ConsoleTerminal+
+~~~~~~~~~~~~~~~~~~~~~~~
+
+[source,javascript]
+--------
+const ConsoleTerminal = require('bleh-editor').ConsoleTerminal;
+--------
+
+TODO.

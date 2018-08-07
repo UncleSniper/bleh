@@ -1,0 +1,10 @@
+[[InputConverter]]
+class +InputConverter+
+~~~~~~~~~~~~~~~~~~~~~~
+
+[source,javascript]
+--------
+const InputConverter = require('bleh-editor').InputConverter;
+--------
+
+TODO.

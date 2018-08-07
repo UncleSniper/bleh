@@ -1,0 +1,10 @@
+[[NotATerminalException]]
+class +NotATerminalException+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[source,javascript]
+--------
+const NotATerminalException = require('bleh-editor').NotATerminalException;
+--------
+
+TODO.

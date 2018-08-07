@@ -1,0 +1,10 @@
+[[KeyPressToKeyConverter]]
+class +KeyPressToKeyConverter+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[source,javascript]
+--------
+const KeyPressToKeyConverter = require('bleh-editor').KeyPressToKeyConverter;
+--------
+
+TODO.

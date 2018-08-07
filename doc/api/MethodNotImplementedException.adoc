@@ -1,0 +1,10 @@
+[[MethodNotImplementedException]]
+class +MethodNotImplementedException+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[source,javascript]
+--------
+const MethodNotImplementedException = require('bleh-editor').MethodNotImplementedException;
+--------
+
+TODO.

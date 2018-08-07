@@ -1,0 +1,10 @@
+[[SequenceMap]]
+class +SequenceMap+
+~~~~~~~~~~~~~~~~~~~
+
+[source,javascript]
+--------
+const SequenceMap = require('bleh-editor').SequenceMap;
+--------
+
+TODO.

@@ -1,0 +1,10 @@
+[[IllegalColorIndexException]]
+class +IllegalColorIndexException+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[source,javascript]
+--------
+const IllegalColorIndexException = require('bleh-editor').IllegalColorIndexException;
+--------
+
+TODO.

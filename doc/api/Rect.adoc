@@ -209,7 +209,15 @@ Method +constrainInto+
 Rect.prototype.constrainInto = function(containerWidth, containerHeight)
 --------
 
-TODO.
+Constrain the rectangle to reside within the geometry of a container indicated by the
+given container size. In other words, modifies +this+ rectangle to be the
+<<Rect.intersect,intersection>> of itself with the rectangle whose origin is
+the origin of the coordinate system, +(0, 0)+, and whose size is the given container
+size, +(containerWidth, containerHeight)+.
+
+.Parameters
+* +int containerWidth+ -- width of the constraining rectangle
+* +int containerHeight+ -- height of the constraining rectangle
 
 [[Rect.intersect]]
 Method +intersect+
@@ -220,4 +228,12 @@ Method +intersect+
 Rect.prototype.intersect = function(rect)
 --------
 
-TODO.
+Compute the intersection between two rectangles. Returns the largest rectangle
+contained in both +this+ rectangle and +rect+. Neither +this+ nor +rect+ are
+modified by this operation.
+
+.Parameters
+* +Rect rect+ -- other rectangle
+
+.Returns
+intersection of +this+ and +rect+

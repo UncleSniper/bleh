@@ -1,0 +1,10 @@
+[[SingleCharConverter]]
+class +SingleCharConverter+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[source,javascript]
+--------
+const SingleCharConverter = require('bleh-editor').SingleCharConverter;
+--------
+
+TODO.

@@ -1,0 +1,219 @@
+[[termdb.db]]
+configuration object +termdb.db+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[source,javascript]
+--------
+const terminalTypes = require('bleh-editor').termdb.db;
+--------
+
+TODO.
+
+[[termdb.keyconvs]]
+configuration object +termdb.keyconvs+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[source,javascript]
+--------
+const keyConverters = require('bleh-editor').termdb.keyconvs;
+--------
+
+TODO.
+
+[[termdb.mapseq]]
+function +termdb.mapseq+
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+[source,javascript]
+--------
+const mapseq = require('bleh-editor').termdb.mapseq;
+--------
+
+[source,javascript]
+--------
+function mapseq(rawMap)
+--------
+
+TODO.
+
+[[termdb.mapsing]]
+function +termdb.mapsing+
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[source,javascript]
+--------
+const mapsing = require('bleh-editor').termdb.mapsing;
+--------
+
+[source,javascript]
+--------
+function mapsing(rawMapper)
+--------
+
+TODO.
+
+[[termdb.xtermSeqMap]]
+function +termdb.xtermSeqMap+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[source,javascript]
+--------
+const xtermSeqMap = require('bleh-editor').termdb.xtermSeqMap;
+--------
+
+[source,javascript]
+--------
+function xtermSeqMap(map)
+--------
+
+TODO.
+
+[[termdb.xtermSingles]]
+function +termdb.xtermSingles+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[source,javascript]
+--------
+const xtermSingles = require('bleh-editor').termdb.xtermSingles;
+--------
+
+[source,javascript]
+--------
+function xtermSingles(mapper)
+--------
+
+TODO.
+
+[[termdb.alias]]
+function +termdb.alias+
+~~~~~~~~~~~~~~~~~~~~~~~
+
+[source,javascript]
+--------
+const alias = require('bleh-editor').termdb.alias;
+--------
+
+[source,javascript]
+--------
+function alias(oldName, newName, warningChannel)
+--------
+
+TODO.
+
+[[termdb.ansiEscapes]]
+configuration object +termdb.ansiEscapes+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[source,javascript]
+--------
+const ansiEscapes = require('bleh-editor').termdb.ansiEscapes;
+--------
+
+TODO.
+
+[[termdb.xtermSmcupRmcup]]
+configuration object +termdb.xtermSmcupRmcup+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[source,javascript]
+--------
+const xtermSmcupRmcup = require('bleh-editor').termdb.xtermSmcupRmcup;
+--------
+
+TODO.
+
+[[termdb.setANSIFG16]]
+function +termdb.setANSIFG16+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[source,javascript]
+--------
+const setANSIFG16 = require('bleh-editor').termdb.setANSIFG16;
+--------
+
+[source,javascript]
+--------
+function setANSIFG16(color)
+--------
+
+TODO.
+
+[[termdb.setANSIBG16]]
+function +termdb.setANSIBG16+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[source,javascript]
+--------
+const setANSIBG16 = require('bleh-editor').termdb.setANSIBG16;
+--------
+
+[source,javascript]
+--------
+function setANSIBG16(color)
+--------
+
+TODO.
+
+[[termdb.setANSIFG256]]
+function +termdb.setANSIFG256+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[source,javascript]
+--------
+const setANSIFG256 = require('bleh-editor').termdb.setANSIFG256;
+--------
+
+[source,javascript]
+--------
+function setANSIFG256(color)
+--------
+
+TODO.
+
+[[termdb.setANSIBG256]]
+function +termdb.setANSIBG256+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[source,javascript]
+--------
+const setANSIBG256 = require('bleh-editor').termdb.setANSIBG256;
+--------
+
+[source,javascript]
+--------
+function setANSIBG256(color)
+--------
+
+TODO.
+
+[[termdb.prepareColor16]]
+function +termdb.prepareColor16+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[source,javascript]
+--------
+const prepareColor16 = require('bleh-editor').termdb.prepareColor16;
+--------
+
+[source,javascript]
+--------
+function prepareColor16(color)
+--------
+
+TODO.
+
+[[termdb.prepareColor256]]
+function +termdb.prepareColor256+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[source,javascript]
+--------
+const prepareColor256 = require('bleh-editor').termdb.prepareColor256;
+--------
+
+[source,javascript]
+--------
+function prepareColor256(color)
+--------
+
+TODO.

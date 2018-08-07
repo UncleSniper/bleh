@@ -1,0 +1,10 @@
+[[MappingSingleCharConverter]]
+class +MappingSingleCharConverter+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[source,javascript]
+--------
+const MappingSingleCharConverter = require('bleh-editor').MappingSingleCharConverter;
+--------
+
+TODO.

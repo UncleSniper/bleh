@@ -1,0 +1,10 @@
+[[SequenceMapInputConverter]]
+class +SequenceMapInputConverter+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+[source,javascript]
+--------
+const SequenceMapInputConverter = require('bleh-editor').SequenceMapInputConverter;
+--------
+
+TODO.
