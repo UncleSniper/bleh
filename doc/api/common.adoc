@@ -2,4 +2,8 @@ Common concepts
 ---------------
 TODO.
 
+'''
+
 include::MethodNotImplementedException.adoc[]
+
+'''

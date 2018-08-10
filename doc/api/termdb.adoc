@@ -9,6 +9,7 @@ const terminalTypes = require('bleh-editor').termdb.db;
 
 TODO.
 
+'''
 [[termdb.keyconvs]]
 configuration object +termdb.keyconvs+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -20,6 +21,7 @@ const keyConverters = require('bleh-editor').termdb.keyconvs;
 
 TODO.
 
+'''
 [[termdb.mapseq]]
 function +termdb.mapseq+
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -36,6 +38,7 @@ function mapseq(rawMap)
 
 TODO.
 
+'''
 [[termdb.mapsing]]
 function +termdb.mapsing+
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -52,6 +55,7 @@ function mapsing(rawMapper)
 
 TODO.
 
+'''
 [[termdb.xtermSeqMap]]
 function +termdb.xtermSeqMap+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -68,6 +72,7 @@ function xtermSeqMap(map)
 
 TODO.
 
+'''
 [[termdb.xtermSingles]]
 function +termdb.xtermSingles+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -84,6 +89,7 @@ function xtermSingles(mapper)
 
 TODO.
 
+'''
 [[termdb.alias]]
 function +termdb.alias+
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -100,6 +106,7 @@ function alias(oldName, newName, warningChannel)
 
 TODO.
 
+'''
 [[termdb.ansiEscapes]]
 configuration object +termdb.ansiEscapes+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -111,6 +118,7 @@ const ansiEscapes = require('bleh-editor').termdb.ansiEscapes;
 
 TODO.
 
+'''
 [[termdb.xtermSmcupRmcup]]
 configuration object +termdb.xtermSmcupRmcup+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -122,6 +130,7 @@ const xtermSmcupRmcup = require('bleh-editor').termdb.xtermSmcupRmcup;
 
 TODO.
 
+'''
 [[termdb.setANSIFG16]]
 function +termdb.setANSIFG16+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -138,6 +147,7 @@ function setANSIFG16(color)
 
 TODO.
 
+'''
 [[termdb.setANSIBG16]]
 function +termdb.setANSIBG16+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -154,6 +164,7 @@ function setANSIBG16(color)
 
 TODO.
 
+'''
 [[termdb.setANSIFG256]]
 function +termdb.setANSIFG256+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -170,6 +181,7 @@ function setANSIFG256(color)
 
 TODO.
 
+'''
 [[termdb.setANSIBG256]]
 function +termdb.setANSIBG256+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -186,6 +198,7 @@ function setANSIBG256(color)
 
 TODO.
 
+'''
 [[termdb.prepareColor16]]
 function +termdb.prepareColor16+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -202,6 +215,7 @@ function prepareColor16(color)
 
 TODO.
 
+'''
 [[termdb.prepareColor256]]
 function +termdb.prepareColor256+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
